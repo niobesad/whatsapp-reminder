@@ -1,0 +1,157 @@
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Sidebar styles */
+.offcanvas.offcanvas-start {
+    width: 280px;
+    /* background: linear-gradient(135deg, #667eea, #764ba2); */
+    color: white;
+    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.offcanvas-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.offcanvas-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #000000;
+}
+
+.btn-close {
+    filter: invert(1);
+}
+
+.offcanvas-body {
+    padding: 1rem 1.5rem;
+}
+
+.offcanvas-body h6 {
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #0000ff;
+    text-transform: uppercase;
+}
+
+.offcanvas-body ul {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1rem;
+}
+
+.offcanvas-body ul li {
+    margin-bottom: 0.6rem;
+}
+
+.offcanvas-body ul li a {
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: block;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.offcanvas-body ul li a:hover,
+.offcanvas-body ul li a:focus {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: #fff;
+    text-decoration: none;
+    outline: none;
+}
+
+/* Sidebar toggle button */
+.btn-primary {
+    background: #667eea;
+    border: none;
+    box-shadow: 0 3px 6px rgba(102, 126, 234, 0.5);
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: #5a67d8;
+    box-shadow: 0 5px 10px rgba(90, 103, 216, 0.6);
+}
+
+/* Floating Action Button */
+.fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #764ba2;
+    color: #fff;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(118, 75, 162, 0.5);
+    transition: background-color 0.3s ease;
+}
+
+.fab:hover {
+    background: #667eea;
+    box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.list-item-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 16px;
+    color: #dc3545; /* Optional: red delete color */
+}
+
+.list-item-actions button:hover {
+    color: #a71d2a;
+}
+
+
+/* Responsive sidebar visibility */
+@media (min-width: 768px) {
+    .offcanvas.offcanvas-start {
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        transform: none !important; /* Show sidebar */
+        visibility: visible !important;
+        border-radius: 0;
+        box-shadow: 3px 0 15px rgba(0, 0, 0, 0.2);
+        /* background: linear-gradient(135deg, #8d94b1, #dadada); */
+        color: white;
+    }
+
+    /* Push main content right to avoid overlay */
+    body {
+        padding-left: 280px;
+    }
+
+    /* Hide the offcanvas toggle button on large screens */
+    button[data-bs-toggle="offcanvas"] {
+        display: none;
+    }
+}

@@ -1,0 +1,116 @@
+what abou this can it use bootstrap also rather than use the style.css
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reminders App</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Add this to your head section -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Hamburger menu -->
+        <div class="hamburger-menu" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-section">
+                <h3>Reminders</h3>
+                <ul id="reminder-lists">
+                    <ul>
+                        <li onclick="loadView('all')">All Reminders</li>
+                        <li onclick="loadView('upcoming')">Upcoming Reminders</li>
+                        <li onclick="loadView('completed')">Completed Reminders</li>
+                    </ul>
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Lists</h3>
+                <ul id="custom-lists">
+                    <!-- Dynamically populated -->
+                </ul>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Tasks</h3>
+                <ul>
+                    <li onclick="showEditListsModal()">Edit Lists</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 id="current-list">All Reminders</h1>
+                <h2 id="current-sublist">Local Reminders</h2>
+            </div>
+
+            <div class="reminders-list" id="reminders-container">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab" onclick="showAddReminderModal()">
+            <i class="fas fa-plus"></i>
+        </div>
+
+        <!-- Add Reminder Modal -->
+        <div class="modal" id="add-reminder-modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('add-reminder-modal')">&times;</span>
+                <h2>Add New Reminder</h2>
+                <form id="add-reminder-form">
+                    <div class="form-group">
+                        <label for="reminder-title">Title</label>
+                        <input type="text" id="reminder-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reminder-description">Description</label>
+                        <textarea id="reminder-description" rows="4"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="reminder-due">Due Date</label>
+                        <input type="datetime-local" id="reminder-due">
+                    </div>
+                    <div class="form-group">
+                        <label for="reminder-list">List</label>
+                        <select id="reminder-list">
+                            <!-- Dynamically populated -->
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">Add Reminder</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Edit Lists Modal (Reusing modal styles) -->
+        <div class="modal" id="edit-lists-modal">
+            <div class="modal-content">
+                <span class="close" onclick="hideModal('edit-lists-modal')">&times;</span>
+                <h2>Edit Lists</h2>
+                <div id="lists-container">
+                    <!-- Dynamically populated -->
+                </div>
+                <div class="form-group add-list-form">
+                    <input type="text" id="new-list-name" placeholder="New list name">
+                    <button class="submit-btn" onclick="addNewList()">Add List</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="/script.js"></script>
+</body>
+
+</html>
