@@ -36,13 +36,22 @@ router.post('/login', async (req, res) => {
         const { user } = await Auth.loginUser({ email, password });
 
         // Set user ID in session here:
-        req.session.userId = user.id || user._id; // adapt depending on your user object
+        req.session.userId = user.id || user._id;
 
         // Respond with success, no token needed for session auth
         res.json({ success: true, user });
     } catch (err) {
         res.status(400).json({ error: err.message });
     }
+});
+
+router.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Logout failed' });
+        }
+        res.redirect('/login.html');
+    });
 });
 
 export default router;

@@ -5,6 +5,7 @@ const customLists = document.getElementById('custom-lists');
 const addReminderForm = document.getElementById('add-reminder-form');
 const reminderListSelect = document.getElementById('reminder-list');
 
+
 // Current state
 let currentList = 'All Reminders';
 
@@ -327,3 +328,26 @@ window.addEventListener('load', function () {
         document.getElementById('sidebar').classList.remove('active');
     }
 });
+
+function logout() {
+    fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+    })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                return response.json();
+            }
+        })
+        .then(data => {
+            if (data?.error) {
+                alert('Logout failed: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Logout error:', error);
+            alert('An unexpected error occurred during logout.');
+        });
+}

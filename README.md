@@ -33,7 +33,7 @@ A simple app that sends WhatsApp reminders using **Baileys** WhatsApp Web API.
 - Run the app:
   npm start
 
-- When the app starts, a QR code will appear in the terminal.
+- When the app starts at teh first time, a QR code will appear in the terminal.
 
 - Scan this QR code with WhatsApp on your admin phone to link the session.
 
