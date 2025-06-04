@@ -34,42 +34,42 @@ A simple app that sends WhatsApp reminders using **Baileys** WhatsApp Web API.
 
 1. Setup
 
-- Clone the repository:
-  git clone https://github.com/niobesad/whatsapp-reminder.git
-  cd whatsapp-reminder
+  - Clone the repository:
+    git clone https://github.com/niobesad/whatsapp-reminder.git
+    cd whatsapp-reminder
 
-- Install dependencies:
-  npm install
+  - Install dependencies:
+    npm install
 
-- Run database migrations:
-  npx knex migrate:latest
+  - Run database migrations:
+    npx knex migrate:latest
 
 2. Link Admin WhatsApp (Baileys QR Code)
 
-- Run the app:
-  npm start
+  - Run the app:
+    npm start
 
-- When the app starts at teh first time, a QR code will appear in the terminal.
+  - When the app starts at teh first time, a QR code will appear in the terminal.
 
-- Scan this QR code with WhatsApp on your admin phone to link the session.
+  - Scan this QR code with WhatsApp on your admin phone to link the session.
 
-- Once linked, the app will use this WhatsApp session to send reminders.
+  - Once linked, the app will use this WhatsApp session to send reminders.
 
 3. Open the App
 
-- Keep the app running.
+  - Keep the app running.
 
-- Go to http://localhost:5000 to create account and login then start using app
+  - Go to http://localhost:5000 to create account and login then start using app
 
-- The app will send WhatsApp messages through the linked admin account as it set by user remiders.
+  - The app will send WhatsApp messages through the linked admin account as it set by user remiders.
 
 TROUBLESHOOTING
 
-- If the QR code does not appear, check the terminal output.
+  - If the QR code does not appear, check the terminal output.
 
-- Re-scan the QR code if the session expires or disconnects.
+  - Re-scan the QR code if the session expires or disconnects.
 
-- Ensure the admin WhatsApp is active and connected to the internet.
+  - Ensure the admin WhatsApp is active and connected to the internet.
 
 ---
 
