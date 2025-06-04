@@ -37,6 +37,7 @@
                 <h6>Tasks</h6>
                 <ul>
                     <li><a href="#" onclick="showEditListsModal()">Edit Lists</a></li>
+                    <li><a href="#" onclick="showEditReceiversModal()">Edit Receivers Number</a></li>
                 </ul>
                 <h6>Account</h6>
                 <ul>
@@ -109,6 +110,44 @@
                         <input type="text" id="new-list-name" class="form-control" placeholder="New list name">
                         <button class="btn btn-success" onclick="addNewList()">Add List</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Receivers Modal -->
+    <div class="modal fade" id="edit-receivers-modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Receivers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+
+                    <select id="phone-type-select" class="form-select mb-3" onchange="switchPhoneType()">
+                        <option value="my-phone">My Phone Number</option>
+                        <option value="broadcast">Broadcast Phone Numbers</option>
+                    </select>
+
+                    <!-- My Phone Number Section -->
+                    <div id="my-phone-section" style="display: none;">
+                        <input type="text" id="my-phone-input" class="form-control mb-2"
+                            placeholder="Your phone number">
+                        <button class="btn btn-primary" onclick="saveMyPhoneNumber()">Save</button>
+                        <div id="my-phone-message" class="mt-2"></div>
+                    </div>
+
+                    <!-- Broadcast Phone Numbers Section -->
+                    <div id="broadcast-section" style="display: none;">
+                        <div id="receivers-container"></div>
+                        <div class="input-group mt-3">
+                            <input type="text" id="new-receiver-phone" class="form-control"
+                                placeholder="New phone number">
+                            <button class="btn btn-success" onclick="addNewReceiver()">Add Receiver</button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

@@ -11,6 +11,12 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const authFolder = path.join(__dirname, './auth_info');
 
 let sock;
+let readyResolve;
+
+export const waitForWhatsAppReady = new Promise((resolve) => {
+    readyResolve = resolve;
+});
+
 
 export async function startWhatsApp() {
     const { state, saveCreds } = await useMultiFileAuthState(authFolder);
@@ -35,6 +41,7 @@ export async function startWhatsApp() {
             }
         } else if (connection === 'open') {
             console.log('✅ WhatsApp connection ready');
+            readyResolve();
         }
     });
 
@@ -59,4 +66,5 @@ export async function sendWhatsAppMessage(phoneNumber, message) {
 
     const jid = `${phoneNumber}@s.whatsapp.net`;
     await sock.sendMessage(jid, { text: message });
+    // console.log('Sent for number :', phoneNumber);
 }

@@ -68,45 +68,69 @@ function scheduleReminder(reminder, phone) {
 // On startup, find all active reminders and schedule them
 async function initialScanAndSchedule() {
     try {
-        const now = new Date();
-        // No time range limit, schedule all incomplete reminders regardless of due_date
         const reminders = await db('reminders')
             .join('users', 'reminders.user_id', '=', 'users.id')
-            .select('reminders.id', 'reminders.title', 'reminders.description', 'reminders.due_date', 'users.phone', 'reminders.completed')
+            .select(
+                'reminders.id',
+                'reminders.title',
+                'reminders.description',
+                'reminders.due_date',
+                'reminders.user_id',
+                'reminders.completed',
+                'users.broadcast_mode',
+                'users.phone'
+            )
             .where('reminders.completed', 0);
 
         for (const reminder of reminders) {
-            scheduleReminder(reminder, reminder.phone);
+            await scheduleReminderForUser(reminder);
         }
+
         console.log(`Initial scan scheduled ${reminders.length} reminders.`);
     } catch (error) {
         console.error('Error in initial scan:', error);
     }
 }
 
-// Called when a new or updated reminder is saved
+// Called by intiall or when a new or updated reminder is saved in api
 export async function scheduleReminderForUser(reminder) {
     try {
-        if (reminder.completed) {
+        if (reminder.completed) return;
+
+        const phones = await getPhonesForReminder(reminder);
+
+        if (!phones.length) {
+            console.warn(`No valid phone numbers for reminder ${reminder.id}`);
             return;
         }
 
-        let phone = reminder.phone;
-        if (!phone) {
-            const user = await db('users').where('id', reminder.user_id).first();
-            if (!user || !user.phone) {
-                console.warn(`Cannot schedule reminder ${reminder.id}: user phone not found`);
-                return;
-            }
-            phone = user.phone;
-        }
-
-        // Pass it to scheduler
-        scheduleReminder(reminder, phone);
+        phones.forEach(phone => {
+            scheduleReminder(reminder, phone);
+        });
     } catch (error) {
         console.error('Error scheduling reminder for user:', error);
     }
 }
+
+async function getPhonesForReminder(reminder) {
+    if (reminder.broadcast_mode === 1) {
+        // Broadcast mode: get all receiver phones
+        const receivers = await db('receivers_lists')
+            .where('user_id', reminder.user_id)
+            .pluck('phone_number');
+
+        return receivers.filter(Boolean); // Remove nulls/undefined
+    } else {
+        // Normal mode
+        if (reminder.phone) {
+            return [reminder.phone];
+        }
+
+        const user = await db('users').where('id', reminder.user_id).first();
+        return user?.phone ? [user.phone] : [];
+    }
+}
+
 
 // Entry point for scheduler
 export async function startScheduler() {

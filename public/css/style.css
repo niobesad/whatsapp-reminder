@@ -107,7 +107,7 @@ body {
     box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
 }
 
-.list-item {
+.list-item, .receiver-item{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -115,7 +115,7 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-.list-item-actions button {
+.list-item-actions button, .receiver-item-actions button {
     background: none;
     border: none;
     cursor: pointer;
@@ -124,7 +124,7 @@ body {
     color: #dc3545; /* Optional: red delete color */
 }
 
-.list-item-actions button:hover {
+.list-item-actions button:hover, .receiver-item-actions button:hover {
     color: #a71d2a;
 }
 

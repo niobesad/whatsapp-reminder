@@ -6,11 +6,13 @@ import session from 'express-session';
 import dotenv from 'dotenv';
 
 import { startScheduler } from './services/schedulerServices.js';
-import { startWhatsApp } from './services/whatsappServices.js';
+import { startWhatsApp, waitForWhatsAppReady } from './services/whatsappServices.js';
 
 import remindersRouter from './routes/reminders.js';
 import listsRouter from './routes/lists.js';
 import authRoutes from './routes/auths.js';
+import receiversRouter from './routes/receivers.js';
+import userRouter from './routes/users.js';
 
 dotenv.config();
 
@@ -38,6 +40,8 @@ function isAuthenticated(req, res, next) {
 // API routes (protected)
 app.use('/api/reminders', isAuthenticated, remindersRouter);
 app.use('/api/lists', isAuthenticated, listsRouter);
+app.use('/api/receivers', isAuthenticated, receiversRouter);
+app.use('/api/user', isAuthenticated, userRouter);
 
 // Auth routes (public)
 app.use('/api/auth', authRoutes);
@@ -51,8 +55,9 @@ app.get('/', isAuthenticated, (req, res) => {
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Background services
-startWhatsApp();
-startScheduler();
+await startWhatsApp();
+await waitForWhatsAppReady;
+await startScheduler();
 
 // Start server
 const PORT = process.env.PORT || 5000;

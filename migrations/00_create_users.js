@@ -4,6 +4,7 @@ export function up(knex) {
         table.string('username', 50).unique().notNullable();
         table.string('email', 100).unique().notNullable();
         table.string('phone', 20); // Optional phone number field
+        table.integer('broadcast_mode').notNullable().defaultTo(0); // 0 or 1
         table.string('password', 255).notNullable();
         table.timestamps(true, true); // created_at and updated_at
     });

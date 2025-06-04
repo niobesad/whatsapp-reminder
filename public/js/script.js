@@ -245,6 +245,18 @@ function showAddReminderModal() {
     modal.show();
 }
 
+function showEditListsModal() {
+    const modal = new bootstrap.Modal(document.getElementById('edit-lists-modal'));
+    modal.show();
+    renderListsInModal();
+}
+
+function showEditReceiversModal() {
+    const modal = new bootstrap.Modal(document.getElementById('edit-receivers-modal'));
+    modal.show();
+    renderReceiversInModal();
+}
+
 function renderListsInModal() {
     fetch('/api/lists')
         .then(response => response.json())
@@ -268,10 +280,152 @@ function renderListsInModal() {
         });
 }
 
-function showEditListsModal() {
-    const modal = new bootstrap.Modal(document.getElementById('edit-lists-modal'));
+function renderReceiversInModal() {
+    fetch('/api/receivers')
+        .then(response => response.json())
+        .then(receivers => {
+            const container = document.getElementById('receivers-container');
+            container.innerHTML = '';
+
+            receivers.forEach(receiver => {
+                const div = document.createElement('div');
+                div.className = 'receiver-item';
+                div.innerHTML = `
+                    <span>${receiver.phone_number}</span>
+                    <div class="receiver-item-actions">
+                        <button onclick="deleteReceiver(${receiver.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        });
+}
+
+function addNewReceiver() {
+    const phone = document.getElementById('new-receiver-phone').value.trim();
+    if (!phone) return;
+
+    fetch('/api/receivers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phone })
+    })
+        .then(res => res.json())
+        .then(() => {
+            document.getElementById('new-receiver-phone').value = '';
+            renderReceiversInModal();
+        });
+}
+
+function deleteReceiver(id) {
+    fetch(`/api/receivers/${id}`, { method: 'DELETE' })
+        .then(() => renderReceiversInModal());
+}
+
+function switchPhoneType() {
+    const select = document.getElementById('phone-type-select');
+    const myPhoneSection = document.getElementById('my-phone-section');
+    const broadcastSection = document.getElementById('broadcast-section');
+
+    if (select.value === 'my-phone') {
+        myPhoneSection.style.display = 'block';
+        broadcastSection.style.display = 'none';
+        loadMyPhoneNumber();
+    } else {
+        myPhoneSection.style.display = 'none';
+        broadcastSection.style.display = 'block';
+        renderReceiversInModal();
+    }
+}
+
+function loadMyPhoneNumber() {
+    fetch('/api/user/phone')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('my-phone-input').value = data.phone_number || '';
+            document.getElementById('my-phone-message').textContent = '';
+        });
+}
+
+function saveMyPhoneNumber() {
+    const phone = document.getElementById('my-phone-input').value.trim();
+    if (!phone) {
+        document.getElementById('my-phone-message').textContent = 'Phone number cannot be empty.';
+        return;
+    }
+
+    fetch('/api/user/phone', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone_number: phone })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('my-phone-message').textContent = 'Saved successfully!';
+            } else {
+                document.getElementById('my-phone-message').textContent = data.error || 'Failed to save.';
+            }
+        })
+        .catch(() => {
+            document.getElementById('my-phone-message').textContent = 'Error saving phone number.';
+        });
+}
+
+function showEditReceiversModal() {
+    const modal = new bootstrap.Modal(document.getElementById('edit-receivers-modal'));
     modal.show();
-    renderListsInModal();
+    // default to my phone or broadcast, you can change this
+    document.getElementById('phone-type-select').value = 'broadcast'; // or 'my-phone'
+    switchPhoneType();
+}
+
+async function loadBroadcastMode() {
+    const res = await fetch('/api/user/broadcast-mode');
+    if (!res.ok) return 0; // default fallback
+
+    const data = await res.json();
+    return data.broadcast_mode;
+}
+
+async function saveBroadcastMode(mode) {
+    await fetch('/api/user/broadcast-mode', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ broadcast_mode: mode }),
+    });
+}
+
+async function switchPhoneType() {
+    const select = document.getElementById('phone-type-select');
+    const myPhoneSection = document.getElementById('my-phone-section');
+    const broadcastSection = document.getElementById('broadcast-section');
+
+    const mode = select.value === 'my-phone' ? 0 : 1;
+    await saveBroadcastMode(mode); // save user choice
+
+    if (mode === 0) {
+        myPhoneSection.style.display = 'block';
+        broadcastSection.style.display = 'none';
+        loadMyPhoneNumber();
+    } else {
+        myPhoneSection.style.display = 'none';
+        broadcastSection.style.display = 'block';
+        renderReceiversInModal();
+    }
+}
+
+async function showEditReceiversModal() {
+    const modal = new bootstrap.Modal(document.getElementById('edit-receivers-modal'));
+    modal.show();
+
+    const savedMode = await loadBroadcastMode();
+    const select = document.getElementById('phone-type-select');
+    select.value = savedMode === 0 ? 'my-phone' : 'broadcast';
+
+    switchPhoneType();
 }
 
 

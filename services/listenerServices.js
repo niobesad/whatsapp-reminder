@@ -4,7 +4,7 @@ import knex from '../db/connection.js';
 export async function markReminderAsComplete(reminderId) {
     try {
         const updated = await knex('reminders')
-            .where({ id: reminderId })
+            .where({ id: reminderId, completed: 0 })
             .update({ completed: '1' });
         return updated > 0;
     } catch (err) {
@@ -20,9 +20,18 @@ export async function getLastPendingReminderByUser(phone) {
         .where('users.phone', trimPhone)
         .andWhere('reminders.completed', 0)
         .orderBy('reminders.due_date', 'desc')
-        .select('reminders.*')
+        .select('reminders.*');
 }
 
+export async function isReminderOwnedByUser(phone, reminderId) {
+    const trimPhone = phone.split('@')[0];
+    const reminder = await knex('reminders')
+        .join('users', 'reminders.user_id', 'users.id')
+        .where('reminders.id', reminderId)
+        .andWhere('users.phone', trimPhone)
+        .first();
+    return !!reminder;
+}
 
 export async function handleIncomingMessage(message, client) {
     try {
@@ -37,6 +46,13 @@ export async function handleIncomingMessage(message, client) {
         const completeWithIdMatch = normalizedMsg.match(/complete\s+(\w+)/i);
         if (completeWithIdMatch) {
             const reminderId = completeWithIdMatch[1];
+            const isOwner = await isReminderOwnedByUser(from, reminderId);
+            if (!isOwner) {
+                await client.sendMessage(from, {
+                    text: `❌ You are not authorized to complete this reminder.`,
+                }, { quoted: message });
+                return;
+            }
             const success = await markReminderAsComplete(reminderId);
             const replyText = success
                 ? `✅ Reminder ${reminderId} marked as complete.`
@@ -51,9 +67,15 @@ export async function handleIncomingMessage(message, client) {
 
         if (contextInfo && quotedText && /complete/i.test(normalizedMsg)) {
             const idMatch = quotedText.match(/ID:\s?(\w+)/i);
-
             if (idMatch && idMatch[1]) {
                 const reminderId = idMatch[1];
+                const isOwner = await isReminderOwnedByUser(from, reminderId);
+                if (!isOwner) {
+                    await client.sendMessage(from, {
+                        text: `❌ You are not authorized to complete this reminder.`,
+                    }, { quoted: message });
+                    return;
+                }
                 const success = await markReminderAsComplete(reminderId);
                 const replyText = success
                     ? `✅ Reminder ${reminderId} marked as complete.`
@@ -70,15 +92,23 @@ export async function handleIncomingMessage(message, client) {
         // 3. Plain "complete"
         if (/^complete$/i.test(normalizedMsg)) {
             const lastReminder = await getLastPendingReminderByUser(from);
-            if (!lastReminder) {
+            if (!lastReminder || lastReminder.length === 0) {
                 await client.sendMessage(from, {
                     text: `❌ No pending reminders found.`,
                 }, { quoted: message });
                 return;
             }
-            const success = await markReminderAsComplete(lastReminder.id);
+            const reminderId = lastReminder[0].id;
+            const isOwner = await isReminderOwnedByUser(from, reminderId);
+            if (!isOwner) {
+                await client.sendMessage(from, {
+                    text: `❌ You are not authorized to complete this reminder.`,
+                }, { quoted: message });
+                return;
+            }
+            const success = await markReminderAsComplete(reminderId);
             const replyText = success
-                ? `✅ Last reminder (ID: ${lastReminder.id}) marked as complete.`
+                ? `✅ Last reminder (ID: ${reminderId}) marked as complete.`
                 : `❌ Could not mark the last reminder as complete.`;
             await client.sendMessage(from, { text: replyText }, { quoted: message });
             return;
@@ -88,4 +118,3 @@ export async function handleIncomingMessage(message, client) {
         console.error('Error in handleIncomingMessage:', err);
     }
 }
-
