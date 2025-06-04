@@ -1,6 +1,8 @@
-WhatsApp Reminder App
+# WhatsApp Reminder App
 
 A simple app that sends WhatsApp reminders using **Baileys** WhatsApp Web API.
+
+---
 
 ## FEATURES
 
@@ -9,10 +11,24 @@ A simple app that sends WhatsApp reminders using **Baileys** WhatsApp Web API.
 2. Organize reminders using list-tags for better categorization.
 
 3. Receive WhatsApp notifications:
+   - 5 minutes before the reminder,
+   - At the exact reminder time,
+   - And 5 minutes after the reminder.
 
-    - 5 minutes before the reminder,
-    - At the exact reminder time,
-    - And 5 minutes after the reminder.
+4. Choose who gets the reminder:
+   - Send to your own phone or a list member's phone.
+
+5. Manage list members:
+   - Add or delete phone numbers from your reminder list.
+
+6. Completion tracking:
+   - Only reminders marked complete from the user’s own phone will be counted.
+
+7. User Interface:
+   - UI for managing list members.
+   - UI for filtering reminders by tags.
+
+---
 
 ## HOW TO USE
 
